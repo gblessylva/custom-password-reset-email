@@ -1,0 +1,16 @@
+.custom-image-section{
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+}
+td p.description{
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+td textarea{
+    padding: 10px;
+}
+.custom-image-section div img{
+    height: 100px;
+    width: 100px;
+}   
