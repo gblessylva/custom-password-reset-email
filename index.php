@@ -14,7 +14,8 @@ class Custom_Password_Reset_Email {
     public function __construct() {
         add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
         add_action( 'admin_init', array( $this, 'settings_init' ) );
-        add_filter( 'retrieve_password_message', array( $this, 'custom_password_reset_email' ), 10, 4 );
+        add_filter( 'retrieve_password_message', array( $this, 'custom_lost_password_email_message' ), 10, 4 );
+        add_filter( 'wp_mail', array( $this, 'custom_lost_password_email_headers' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
     }
 
@@ -133,10 +134,9 @@ class Custom_Password_Reset_Email {
     }
 
     // Customize the title and content of the password reset email
-    public function custom_password_reset_email( $message, $key, $user_login, $user_data ) {
-        $subject = $this->sanitize_and_escape( get_option( 'custom_password_reset_email_subject', 'Custom Password Reset Request' ));
-        $content = $this->sanitize_and_escape( get_option( 'custom_password_reset_email_content', '' ));
-        $image_url = get_option( 'custom_password_reset_email_image', '' );
+    public function custom_lost_password_email_message( $message, $key, $user_login, $user_data ) {
+            $content = $this->sanitize_and_escape( get_option( 'custom_password_reset_email_content', '' ));
+            $image_url = get_option( 'custom_password_reset_email_image', '' );
 
         // Replace placeholders with their respective values
         $content = str_replace( '[user-login]', $user_login, $content );
@@ -144,17 +144,26 @@ class Custom_Password_Reset_Email {
         $reset_password_url = '<a href="' . esc_url (network_site_url( "wp-login.php?action=rp&key=$key&login=" . rawurlencode( $user_login ), 'login' )) . '">Reset Password</a>';
         $content = str_replace( '[reset-password-url]', $reset_password_url, $content );
 
-        // Create the email content
-        $message = '<p>' . $content . '</p>';
-
-        // Add the image to the email content
-        if ( ! empty( $image_url ) ) {
+            
+            $message = $content;
+            if ( ! empty( $image_url ) ) {
             $message .= '<img src="' . esc_url( $image_url ) . '" alt="Custom Image" style="max-width: 100%;">';
         }
+    
+            return $message;
+        }
 
-        return array( $subject, $message );
-    }
+        public function custom_lost_password_email_headers( $mail ) {
+            $subject = get_option( 'custom_password_reset_email_subject' );
+    
+            $mail['subject'] = $subject;
+            $mail['headers'] = 'Content-Type: text/html; charset=UTF-8';
+    
+            return $mail;
+        }
+   
 }
 
 // Instantiate the class
 new Custom_Password_Reset_Email();
+
