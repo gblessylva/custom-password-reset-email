@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Custom Password Reset Email
-Plugin URI:  https://your-plugin-website.com
+Plugin URI:  https://github.com/gblessylva
 Description: Customizes the password reset email template.
 Version:     1.0
-Author:      Your Name
-Author URI:  https://your-website.com
+Author:      Sylvanus Godbless
+Author URI:  https://github.com/gblessylva
 License:     GPL2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
